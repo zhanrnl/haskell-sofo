@@ -1,0 +1,110 @@
+\documentclass[11pt]{amsart}
+\usepackage[margin=1.0in]{geometry}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{enumerate}
+\usepackage{mathrsfs}
+\usepackage[all]{xy}
+
+\newcommand{\answerline}{\underline{\qquad\qquad\qquad\qquad}}
+\newcommand{\example}[2]{\tt > {#1}
+
+\hspace{2pt}{#2}\rm}
+
+\newcounter{problemcount}
+\setcounter{problemcount}{0}
+\newenvironment{problem}[1]{
+  \stepcounter{problemcount}
+  \subsection*{Problem \arabic{problemcount}} 
+  \textbf{{#1}} 
+
+}{}
+
+\title{Haskell Programming Problem Set 1}
+\author{Lennart Jansson and Brandon Azad, version 01}
+
+\begin{document}
+\maketitle
+Read Chapter 2 of \textit{Learn You a Haskell}, then use the techniques described to solve the following problems. No more advanced techniques are needed.
+\section*{Simple Functions}
+\begin{problem}{Triangle numbers}
+Write a function \texttt{nthTri} that takes an \texttt{Int} $n$ and returns the $n$th triangle number.
+\end{problem}
+
+\example{nthTri 0}{0}
+
+\example{nthTri 2}{3}
+
+\example{nthTri 4}{10}
+\begin{problem}{Palindromes}
+Write a function \texttt{isPalindrome} that takes a string and returns \texttt{True} if it's a palindrome and \texttt{False} if it's not.
+\end{problem}
+
+\example{isPalindrome "racecar"}{True}
+
+\example{isPalindrome "palindrome"}{False}
+\begin{problem}{Parity}
+Write a function \texttt{sameParity} that takes a list of \texttt{Int}s and returns \texttt{True} if the first and last elements of the list have the same parity (even or odd) and \texttt{False} if they don't.
+\end{problem}
+
+\example{sameParity [1, 4, 2]}{False}
+
+\example{sameParity [3, 2, 6, 7]}{True}
+\section*{List Comprehensions and Ranges}
+\begin{problem}{Summing integers}
+Write a function \texttt{specialSum} that takes an \texttt{Int} $n$ and returns the sum of all positive integers less than $n$ not divisible by 3 or 7.
+\end{problem}
+
+\example{oddSum 8}{12}
+\begin{problem}{Squares and ranges}
+Write a function \texttt{isSquareBetween} that takes three \texttt{Int}s, $a$, $b$, and $c$, and returns \texttt{True} if some integer between $b$ and $c$ inclusive, when squared, is $a$.
+\end{problem}
+
+\example{isSquareBetween 9 2 3}{True}
+
+\example{isSquareBetween 16 2 3}{False}
+
+To do the next problem, you might need the function \texttt{concat}, which takes a list of lists and concatenates all of them to make a single list. 
+
+\example{concat ["ab", "cd", "ef"]}{"abcdef"}
+\begin{problem}{String manipulation}
+Write a function \texttt{tripleLetters} that takes a string and returns the string with every letter repeated three times, with every triple of letters separated by a \texttt{-}.
+\end{problem}
+
+\example{tripleLetters "Hello"}{"HHH-eee-lll-lll-ooo"}
+\section*{Challenge Problems}
+These can be done with only the functions described in Chapter 2!
+\begin{problem}{Combinations}
+Write a function \texttt{twoCombo} that takes a list of \texttt{Int}s and returns a list of all unordered combinations without replacement of 2 elements in the list. You can assume the list already consists of distinct elements.
+
+\example{twoCombo [1, 2, 3, 5]}{[(1, 2), (1, 3), (1, 5), (2, 3), (2, 5), (3, 5)]}
+\end{problem}
+\begin{problem}{More combinations}
+Was that too easy? Write a function \texttt{twoCombo'} that does the same thing as \texttt{twoCombo}, but works for any type, not just types that can be compared with \texttt{==} or \texttt{<}. Again assume the list already consists of distinct elements.
+\end{problem}
+\section*{Types and Typeclasses}
+Read Chapter 3 of \textit{Learn You a Haskell}, then annotate the following expressions with their type. You can use \texttt{:t} in \texttt{ghci} to give the answers, or practice guessing the types yourself as an exercise.
+\begin{problem}{Type annotations}
+Give the types of all the following expressions.
+\tt
+\begin{enumerate}[\rm 1. \tt]
+\item "hello" :: \answerline
+\item 3.0 :: \answerline
+\item {[}1, 3, 5{]} :: \answerline
+\item func1 a b = a ++ b\\
+func1 :: \answerline
+\item show 100 :: \answerline
+\item func2 a = (a *)\\
+func2 :: \answerline
+\item tail :: \answerline
+\item func3 x = {[}succ e | e <- x{]}\\
+func3 :: \answerline
+\item func4 x y = {[}(show a, show b) | a <- x, b <- y{]}\\
+func4 :: \answerline
+\end{enumerate}
+\rm
+\end{problem}
+\begin{problem}{More type annotations}
+Annotate all the functions you wrote above with explicit type signatures.
+\end{problem}
+\end{document}
