@@ -1,0 +1,1 @@
+Exercises in Haskell corresponding to chapters of *Learn You a Haskell*. Perhaps will be used to teach an upcoming SoFo?!

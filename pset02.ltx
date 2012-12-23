@@ -1,0 +1,42 @@
+\documentclass[11pt]{amsart}
+\usepackage[margin=1.0in]{geometry}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{enumerate}
+\usepackage{mathrsfs}
+\usepackage[all]{xy}
+\input{macros.ltx}
+\title{Haskell Programming Problem Set 2}
+\author{Lennart Jansson and Brandon Azad}
+
+\begin{document}
+\maketitle
+Read Chapter 4 of \textit{Learn You a Haskell}, then implement the following functions. Use pattern matching, let and where bindings, and case expressions as appropriate to produce elegant code.
+\section*{Function Syntax}
+\begin{problem}{Days of the week}
+Write a function \texttt{dayName ::\ Int -> String} that takes a number 0--6 and gives the corresponding name of the day of the week. If out of range, return an error message.
+\end{problem}
+
+\example{dayName 0}{"Sunday"}
+
+\example{dayName 4}{"Thursday"}
+
+\example{dayName 11}{"Day out of range"}
+\begin{problem}{Passwords}
+Write a function \texttt{validatePassword ::\ String -> Bool} that takes a potential password and returns \texttt{True} if it's a valid password and \texttt{False} if not. A password is valid if it is longer than 5 characters and shorter than 20 characters.
+\end{problem}
+
+\example{validatePassword "bad"}{False}
+
+\example{validatePassword "goodPassword"}{True}
+
+\example{validatePassword "exceedinglyLongPassword"}{False}
+\\
+
+To do the next problem you might need the function \texttt{sqrt ::\ (Floating a) => a -> a}, which does exactly what it says on the tin. \texttt{Float} is an instance of the typeclass \texttt{Floating}.
+\begin{problem}{Triangles}
+Let's represent triangles as 3-tuples \texttt{(Float, Float, Float)} where the three \texttt{Float}s are the lengths of the sides of the triangle.
+
+Write a function \texttt{analyzeTriangle ::\ (Float, Float, Float) -> (Float, Float)} that takes a triangle and returns a tuple of the triangle's area and its perimeter. If the triangle is invalid (does not respect the triangle inequality), then return \texttt{(-1.0, -1.0)} to signify an error.
+\end{problem}
+\end{document}
