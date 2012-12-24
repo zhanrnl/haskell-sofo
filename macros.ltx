@@ -1,13 +1,14 @@
 \newcommand{\answerline}{\underline{\qquad\qquad\qquad\qquad}}
-\newcommand{\example}[2]{\tt > {#1}
-
-\hspace{2pt}{#2}\rm}
+\newcommand{\example}[2]{\texttt{> {#1}\\\hbox{}\hspace{12pt}{#2}}}
+\newcommand{\pgroupspace}{\vspace{10pt}}
 
 \newcounter{problemcount}
 \setcounter{problemcount}{0}
 \newenvironment{problem}[1]{
   \stepcounter{problemcount}
   \subsection*{Problem \arabic{problemcount}} 
-  \textbf{{#1}} 
+  \textbf{{#1}}
 
 }{}
+
+\setlength{\parskip}{0.2\baselineskip}
