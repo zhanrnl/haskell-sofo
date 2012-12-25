@@ -65,3 +65,18 @@ fromList = foldr insert Empty
 toList :: SkewHeap a -> [a]
 toList Empty = []
 toList (SkewNode x left right) = x : toList left ++ toList right
+
+
+-- | LENNART'S ADDITIONS HERE
+-- I like the idea of a toAscList function since then you get the pleasure of
+-- writing heapsort :D  Do you approve?
+
+toAscList :: Ord a => SkewHeap a -> [a]
+toAscList sh =
+  let m = extractMin sh
+  in case m of
+    Just (e, sh') -> e : (toAscList sh')
+    Nothing -> []
+
+heapsort :: Ord a => [a] -> [a]
+heapsort = toAscList . fromList

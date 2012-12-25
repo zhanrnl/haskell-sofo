@@ -16,9 +16,9 @@ A skew heap is built like a binary tree on the inside, where the heap property i
 
 First, let's get used to the data type.
 \begin{verbatim}
-data SkewHeap a = Empty | SkewHeap a (SkewHeap a) (SkewHeap a)
+data SkewHeap a = Empty | SkewNode a (SkewHeap a) (SkewHeap a)
 \end{verbatim}
-The way to parse this type: a \texttt{SkewHeap} that contains elements of type \texttt{a} is either \texttt{Empty}, or is a \texttt{SkewHeap} with a thing of type \texttt{a} at the root, then a left subtree \texttt{SkewHeap a}, then a right subtree \texttt{SkewHeap a}. That's it!
+The way to parse this type: a \texttt{SkewHeap} that contains elements of type \texttt{a} is either \texttt{Empty}, or is a \texttt{SkewHeap} containing a thing of type \texttt{a} at the root, then a left subtree \texttt{SkewHeap a}, then a right subtree \texttt{SkewHeap a}. That's it!
 \begin{problem}{Simple things}
 Implement \texttt{empty ::\ SkewHeap a}. This should give a skew heap with no elements in it.
 
@@ -31,7 +31,7 @@ To take the union of two heaps, we find the heap with smaller root element, call
 
 Implement \texttt{union ::\ Ord a => SkewHeap a -> SkewHeap a -> SkewHeap a}.
 
-Also, define a new operator, for example \texttt{(+|+)}, that is an infix synonym for \texttt{union}. This will make your code prettier down the line since union will be very useful for the following functions.
+Also, define a new operator, for example \texttt{(+*+)}, that is an infix synonym for \texttt{union}. This will make your code prettier down the line since union will be very useful for the following functions.
 \end{problem}
 \begin{problem}{Insert and Extract}
 Implement \texttt{insert ::\ Ord a => a -> SkewHeap a -> SkewHeap a}. This takes an element and a skew heap and returns the skew heap with that element added.
