@@ -1,0 +1,43 @@
+\documentclass[11pt]{amsart}
+\usepackage[margin=1.0in]{geometry}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{enumerate}
+\input{macros.ltx}
+\title{Haskell Programming Problem Set 3}
+\author{Lennart Jansson and Brandon Azad}
+
+\begin{document}
+\maketitle
+
+Read Chapter 6 of \textit{Learn You a Haskell}, and make sure you understand it really well. Being able to work fluently with curried functions and higher-order functions and understanding their types is really important when programming in Haskell, since they are so fundamental to the common idioms you'll use in every Haskell program.
+
+This means it's time for another round of\ldots Name That Type!
+\begin{problem}{Name That Type! round 2}
+Give the types of all the following expressions.
+\tt
+\begin{enumerate}[\rm \quad\;\;(1) \tt]
+\item (3 +)\ :: \answerline
+\item func1 = elem 'a' \\
+func1 :: \answerline
+\item func2 = zip [1..]\\
+func2 :: \answerline
+\item (`div` 10) :: \answerline
+\item map :: \answerline
+\item filter even :: \answerline
+\item show .\ (+ 1) :: \answerline
+\item func3 f xs = map (f .\ f) xs\\
+func3 :: \answerline
+\item func4 f = foldr f 0 "Hello, world!"\\
+func4 :: \answerline
+\item zipWith (\$) :: \answerline
+\item func5 xs = map ($\lambda$ p -> takeWhile p xs)\\
+func5 :: \answerline
+\item func6 = foldl ($\lambda$ a -> (++ (show a)))\\
+func6 :: \answerline
+\item (.)\ .\ (.)\ :: \answerline
+\item ($\lambda$ f g -> map (.\ g) .\ map (\$ f)) :: \answerline
+\end{enumerate}
+\rm
+\end{problem}
+\end{document}
