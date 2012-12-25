@@ -13,6 +13,8 @@ module SkewHeap
 , (+*+)
 , fromList
 , toList
+, toAscList
+, heapsort
 ) where
 
 import Prelude hiding (null)
@@ -66,11 +68,9 @@ toList :: SkewHeap a -> [a]
 toList Empty = []
 toList (SkewNode x left right) = x : toList left ++ toList right
 
+-- LENNART'S ADDITIONS HERE
 
--- | LENNART'S ADDITIONS HERE
--- I like the idea of a toAscList function since then you get the pleasure of
--- writing heapsort :D  Do you approve?
-
+-- | Converts a heap to an ascending list of elements.
 toAscList :: Ord a => SkewHeap a -> [a]
 toAscList sh =
   let m = extractMin sh
@@ -78,5 +78,6 @@ toAscList sh =
     Just (e, sh') -> e : (toAscList sh')
     Nothing -> []
 
+-- | Sorts a list of elements into ascending order.
 heapsort :: Ord a => [a] -> [a]
 heapsort = toAscList . fromList
