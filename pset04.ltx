@@ -1,0 +1,54 @@
+\documentclass[11pt]{amsart}
+\usepackage[margin=1.0in]{geometry}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{enumerate}
+\input{macros.ltx}
+\title{Haskell Programming Problem Set 4}
+\author{Lennart Jansson and Brandon Azad}
+
+\begin{document}
+\maketitle
+\section*{Skew heaps}
+In the next few problems you will implement a skew heap data type, a simple, unstructured, breed of heaps well-adapted to Haskell that can be used to implement priority queues with every operation in at most $O(\log n)$ time. Cool!
+
+A skew heap is built like a binary tree on the inside, where the heap property is respected. This means that every element is smaller than (or equal to) both of its children, and every element is larger than (or equal to) it's parent. The top of the heap is therefore the smallest element in the whole heap. Almost every operation on the skew heap is defined in terms of the union function, which combines two heaps into one and has type \texttt{union ::\ Ord a => SkewHeap a -> SkewHeap a -> SkewHeap a}. Therefore, we'll implement that first.
+
+First, let's get used to the data type.
+\begin{verbatim}
+data SkewHeap a = Empty | SkewHeap a (SkewHeap a) (SkewHeap a)
+\end{verbatim}
+The way to parse this type: a \texttt{SkewHeap} that contains elements of type \texttt{a} is either \texttt{Empty}, or is a \texttt{SkewHeap} with a thing of type \texttt{a} at the root, then a left subtree \texttt{SkewHeap a}, then a right subtree \texttt{SkewHeap a}. That's it!
+\begin{problem}{Simple things}
+Implement \texttt{empty ::\ SkewHeap a}. This should give a skew heap with no elements in it.
+
+Implement \texttt{singleton ::\ a -> SkewHeap a}. This should take a single element and put it in a skew heap with just that one element.
+
+Implement \texttt{null ::\ SkewHeap a -> Bool}, which should return \texttt{True} if the skew heap is completely empty, and \texttt{False} if it does contain some elements.
+\end{problem}
+\begin{problem}{Union}
+To take the union of two heaps, we find the heap with smaller root element, call it $t_a$ and the other $t_b$. Then, we take the union of $t_b$ and the right child of $t_a$, and that becomes the new left child of $t_a$. Then the original left child of $t_a$ becomes the new right child of $t_a$. Now $t_a$ contains all the elements from both $t_a$ and $t_b$, and the heap property is still respected, so the new $t_a$ is the union of the two heaps and is returned.
+
+Implement \texttt{union ::\ Ord a => SkewHeap a -> SkewHeap a -> SkewHeap a}.
+
+Also, define a new operator, for example \texttt{(+|+)}, that is an infix synonym for \texttt{union}. This will make your code prettier down the line since union will be very useful for the following functions.
+\end{problem}
+\begin{problem}{Insert and Extract}
+Implement \texttt{insert ::\ Ord a => a -> SkewHeap a -> SkewHeap a}. This takes an element and a skew heap and returns the skew heap with that element added.
+
+Implement \texttt{extractMin ::\ Ord a => SkewHeap a -> (a, SkewHeap a)}, which takes a skew heap, and returns a tuple of the minimum element in the skew heap as well as the modified skew heap without that element.
+\end{problem}
+\begin{problem}{List interface}
+Implement \texttt{fromList ::\ Ord a => [a] -> SkewHeap a}, which takes a list (not necessarily in sorted order) and puts the elements in a skew heap (where the heap property is respected).
+
+Implement \texttt{toAscList ::\ Ord a => SkewHeap a -> [a]}, which takes a skew heap and gives a list of all the elements in the heap in ascending order.
+\end{problem}
+
+\pgroupspace
+Congratulations! You've implemented a new container type with a similar interface to \texttt{Data.Set} and \texttt{Data.Map}, and a not-too-shabby amount of code. Hopefully this gives you some idea about what goes on under the surface when you use container type modules: it's not mysterious stuff, just plain old Haskell you could understand or implement yourself. 
+
+As a reward...
+\begin{problem}{Heap sort}
+Use skew heaps to implement \texttt{heapsort ::\ Ord a => [a] -> [a]} :)
+\end{problem}
+\end{document}

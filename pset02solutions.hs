@@ -37,3 +37,11 @@ init' (x:xs) = x:(init' xs)
 
 cycle' :: [a] -> [a]
 cycle' xs = xs ++ cycle' xs
+
+ppParens :: String -> String
+ppParens p = reverse (tail (ppParens' p 0 ""))
+  where ppParens' "" _ s = s
+        ppParens' ('(':ps) n s =
+          ppParens' ps (n+1) ("\n(" ++ (replicate n '\t') ++ s)
+        ppParens' (')':ps) n s =
+          ppParens' ps (n-1) ("\n)" ++ (replicate (n-1) '\t') ++ s)

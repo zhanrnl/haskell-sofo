@@ -88,7 +88,7 @@ Why do we care about tail-call recursion? When Haskell programs are compiled, ta
 
 If you have not taken CS107 yet, this may be confusing; don't worry, the internal representations of function calls and the stack is taught thoroughly in that class. The important thing to take away is that tail-call recursive functions are often faster and more efficient to calculate than other recursive functions in Haskell. Here are some problems to play with tail-call recursion.
 \begin{problem}{Implementing sum}
-Here is a version of the \texttt{sum} function that is not tail-call recursive. Reimplement it so that it produces the same result but uses tail-call recursion.
+Here is a version of the \texttt{sum} function that is not tail-call recursive. Reimplement it so that it uses tail-call recursion.
 \begin{verbatim}
 sum1 :: [Int] -> Int
 sum1 [] = 0
@@ -96,7 +96,7 @@ sum1 (n:ns) = n + (sum1 ns)
 \end{verbatim}
 \end{problem}
 \begin{problem}{Implementing reverse}
-Here is a version of the \texttt{reverse} function that is not tail-call recursive. Reimplement it so that it produces the same result but uses tail-call recursion.
+Here is a version of the \texttt{reverse} function that is not tail-call recursive. Reimplement it so that it uses tail-call recursion.
 \begin{verbatim}
 reverse1 :: [a] -> [a]
 reverse1 [] = []
@@ -104,6 +104,34 @@ reverse1 (x:xs) = (reverse xs) ++ x
 \end{verbatim}
 
 Actually, this implementation is very bad for other reasons as well. The operation \texttt{a ++ b} is $O(|\mathtt{a}|)$, while cons-ing elements to the front of a list is only $O(1)$. This is due to the way lists are represented internally in Haskell. More about this later!
+\end{problem}
+
+\begin{problem}{Nested parentheses}
+Write a function \texttt{ppParens ::\ String -> String} that pretty prints a string of nested parentheses, so that every parenthesis gets its own line, and is indented with tabs corresponding to its nested depth. Use tail-call recursion. 
+
+In order to print a string in \texttt{ghci} to see if it's formatted correctly, you can use the function \texttt{putStrLn}, which is a function in the \texttt{IO} monad and therefore the details of which won't be discussed here.
+
+\example{putStrLn "hello$\backslash$nworld"}{hello\\world}
+
+\example{putStrLn (ppParens "(())((()())())")}{\vspace{-1.3\baselineskip}}
+\begin{verbatim}
+(
+    (
+    )
+)
+(
+    (
+        (
+        )
+        (
+        )
+    )
+    (
+    )
+)
+\end{verbatim}
+
+Remember that building up a list by appending things to its back is much slower than building up a list by cons-ing things to its front. 
 \end{problem}
 
 TODO: more tail-call problems here
