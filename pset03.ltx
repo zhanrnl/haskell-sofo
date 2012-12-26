@@ -3,6 +3,7 @@
 \usepackage{amssymb}
 \usepackage{amsthm}
 \usepackage{enumerate}
+\usepackage{alltt}
 \input{macros.ltx}
 \title{Haskell Programming Problem Set 3}
 \author{Lennart Jansson and Brandon Azad}
@@ -10,6 +11,7 @@
 \begin{document}
 \maketitle
 
+\section*{The Types of Higher-Order Functions}
 Read Chapter 6 of \textit{Learn You a Haskell}, and make sure you understand it really well. Being able to work fluently with curried functions and higher-order functions and understanding their types is really important when programming in Haskell, since they are so fundamental to the common idioms you'll use in every Haskell program.
 
 This means it's time for another round of\ldots Name That Type!
@@ -33,11 +35,75 @@ func4 :: \answerline
 \item zipWith (\$) :: \answerline
 \item func5 xs = map ($\lambda$ p -> takeWhile p xs)\\
 func5 :: \answerline
-\item func6 = foldl ($\lambda$ a -> (++ (show a)))\\
+\item func6 = foldl ($\lambda$ a b -> show b :\ a)\\
 func6 :: \answerline
 \item (.)\ .\ (.)\ :: \answerline
 \item ($\lambda$ f g -> map (.\ g) .\ map (\$ f)) :: \answerline
 \end{enumerate}
 \rm
+\end{problem}
+\section*{Using Higher-Order Functions}
+\begin{problem}{Ciphering text}
+Add the line \texttt{import Data.Char} to the top of the file you're working in to give yourself a bunch of character processing functions. Notably, now you have access to \texttt{ord ::\ Char -> Int}, which gives the ASCII code of a given character, and \texttt{chr ::\ Int -> Char}, which does the inverse.
+
+Write a function \texttt{vigenere ::\ String -> String -> String}, where \texttt{vigenere plain key} that performs the Vigen\`ere cipher on the given plaintext with the given key. See \\\texttt{en.wikipedia.org/wiki/Vigenere\_cipher\#Description} for details if you are unfamiliar with the cipher. 
+
+\example{vigenere "ATTACKATDAWN" "LEMON"}{"LXFOPVEFRNHR"}
+\end{problem}
+\begin{problem}{Mapping}
+Write a function \texttt{mapWithIndex ::\ (Int -> a -> b) -> [a] -> [b]} that behaves similarly to \texttt{map}, except the mapping function (the first parameter) also takes in an \texttt{Int} which is set to the index of the element being modified.
+
+\example{mapWithIndex ($\lambda$ i a -> a ++ show i) ["hello", "world"]}{["hello0", "world1"]}
+\end{problem}
+\begin{problem}{Prelude, part 2}
+Let's reimplement a couple more functions from Prelude.
+\begin{enumerate}
+\item \texttt{all ::\ (a -> Bool) -> [a] -> Bool}, which returns \texttt{True} if all the elements in the list satisfy the predicate, and \texttt{False} if at least one doesn't. Write this function two ways, once with manual recursion and once using preexisting higher-order functions.
+\item \texttt{foldr1 ::\ (a -> a -> a) -> [a] -> a}, which is like \texttt{foldr} but without a starting accumulator value. The fold starts at the right side. For example, \texttt{foldr1 (-) [5, 3, 2] == (5 - (3 - 2)) == 4}. Write this function two ways, once with manual recursion and once using preexisting higher-order functions.
+\end{enumerate}
+\end{problem}
+\begin{problem}{Using folds}
+Implement the following functions using \texttt{foldl} or \texttt{foldr}.
+\begin{enumerate}
+\item \texttt{product ::\ Num a => [a] -> a}, which computes the product of a list of numbers.
+\item \texttt{maxLength ::\ [[a]] -> Int}, which computes the length of the longest list out of all the lists in the input list.
+\item \texttt{compose ::\ [(a -> a)] -> a -> a}, which composes together of the functions in the input list.
+\item \texttt{map ::\ (a -> b) -> [a] -> [b]}. Yes, this can actually be done with \texttt{foldr}, but it's a little tricky!
+\end{enumerate}
+\end{problem}
+\begin{problem}{Let's play a game!}
+This problem was inspired by Edward Yang's blog post ``Let's play a game'' from September 2011. (\texttt{blog.ezyang.com/2011/09/lets-play-a-game/})
+
+Due to the rich and expressive type system of Haskell, it's often possible to implement functions based on only their type signature, without any other information. Here's an example. Say I'm given the type signature
+\begin{verbatim}
+(|>) :: a -> (a -> b) -> b
+\end{verbatim}
+To implement it, we have to make a function that will take an \texttt{a} and a \texttt{(a -> b)}, and give us a \texttt{b}. We realize that we can take the first parameter and feed it to the second parameter, and the result will be \texttt{(a -> b)} applied to \texttt{a} which is a value of type \texttt{b}. We're done! The implementation is:
+\begin{verbatim}
+a |> f = f a
+\end{verbatim}
+
+Implement the following functions given only their type signatures.
+\begin{enumerate}
+\item \texttt{const2 ::\ a -> b -> a}
+\item \texttt{fcomp ::\ (a -> b) -> (b -> c) -> a -> c}
+\item \texttt{appc ::\ ((b -> a) -> c) -> a -> c}
+\item \texttt{on2 ::\ (c -> d -> e) -> (a -> c) -> (b -> d) -> a -> b -> e}
+\item \texttt{fmapC ::\ (a -> b) -> ((a -> r) -> r) -> (b -> r) -> r}
+\item \texttt{bindC ::\ ((a -> r) -> r) -> (a -> (b -> r) -> r) -> (b -> r) -> r}
+\end{enumerate}
+\end{problem}
+\section*{Challenge Problems}
+\begin{problem}{Fibonacci}
+Implement \texttt{fib ::\ Integer -> Integer}, where \texttt{fib n} gives the $n$th Fibonacci number. Make sure your program runs in linear time. That is, you should be able to calculate \texttt{fib 200} almost instantaneously.
+
+\example{fib 0}{0}
+
+\example{fib 1}{1}
+
+\example{fib 200}{280571172992510140037611932413038677189525}
+\end{problem}
+\begin{problem}{Magic}
+Implement \texttt{foldl} in terms of \texttt{foldr}.
 \end{problem}
 \end{document}
