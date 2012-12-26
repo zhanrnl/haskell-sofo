@@ -70,10 +70,25 @@ twoCombo :: [Int] -> [(Int,Int)]
 twoCombo xs = [ (x,x') | x <- xs, x' <- xs, x < x' ]
 
 -- We'll use recursion to help with this.
-twoCombo' [a] -> [(a,a)]
+twoCombo' :: [a] -> [(a, a)]
 twoCombo' xs = if null xs
                  then []
-                 else [ (head xs, x) | x <- tail xs] ++ twoCombo (tail xs)
+                 else [ (head xs, x) | x <- tail xs] ++ twoCombo' (tail xs)
+
+-- | LENNART'S INTENDED SOLUTION
+-- Doesn't require recursion!
+
+twoCombo'' :: [a] -> [(a, a)]
+twoCombo'' xs = [(a, b) | (a, n) <- zip xs [1..], b <- drop n xs]
+
+-- | However, this may be off limits because it uses pattern matching on a
+-- tuple, which is not strictly taught in Chapter 2. Then, we just have to do
+-- it this way:
+
+twoCombo''' :: [a] -> [(a, a)]
+twoCombo''' xs = [(fst t, b) | t <- zip xs [1..], b <- drop (snd t) xs]
+
+-- | which uses nothing that's not taught in Chapter 2, including no recursion.
 
 -- Types:
 types1 = "hello" :: String -- or [Char]
