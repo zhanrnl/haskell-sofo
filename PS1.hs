@@ -16,6 +16,13 @@ tris = 0:zipWith (+) tris [1..]
 
 nthTri'' :: Int -> Int
 nthTri'' n = tris !! n
+
+-- An even clearer definition.
+tris' :: [Int]
+tris' = scanl1 (+) [0..]
+
+nthTri''' :: Int -> Int
+nthTri''' n = tris' !! n
 -}
 
 -- Laziness makes this more efficient than it would otherwise be.
