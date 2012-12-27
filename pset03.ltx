@@ -10,10 +10,8 @@
 
 \begin{document}
 \maketitle
-
-\section*{The Types of Higher-Order Functions}
 Read Chapter 6 of \textit{Learn You a Haskell}, and make sure you understand it really well. Being able to work fluently with curried functions and higher-order functions and understanding their types is really important when programming in Haskell, since they are so fundamental to the common idioms you'll use in every Haskell program.
-
+\section*{The Types of Higher-Order Functions}
 This means it's time for another round of\ldots Name That Type!
 \begin{problem}{Name That Type! round 2}
 Give the types of all the following expressions.
@@ -43,13 +41,6 @@ func6 :: \answerline
 \rm
 \end{problem}
 \section*{Using Higher-Order Functions}
-\begin{problem}{Ciphering text}
-Add the line \texttt{import Data.Char} to the top of the file you're working in to give yourself a bunch of character processing functions. Notably, now you have access to \texttt{ord ::\ Char -> Int}, which gives the ASCII code of a given character, and \texttt{chr ::\ Int -> Char}, which does the inverse.
-
-Write a function \texttt{vigenere ::\ String -> String -> String}, where \texttt{vigenere plain key} that performs the Vigen\`ere cipher on the given plaintext with the given key. See \\\texttt{en.wikipedia.org/wiki/Vigenere\_cipher\#Description} for details if you are unfamiliar with the cipher. 
-
-\example{vigenere "ATTACKATDAWN" "LEMON"}{"LXFOPVEFRNHR"}
-\end{problem}
 \begin{problem}{Mapping}
 Write a function \texttt{mapWithIndex ::\ (Int -> a -> b) -> [a] -> [b]} that behaves similarly to \texttt{map}, except the mapping function (the first parameter) also takes in an \texttt{Int} which is set to the index of the element being modified.
 

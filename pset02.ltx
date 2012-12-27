@@ -62,8 +62,6 @@ Write a function \texttt{mergesort ::\ Ord a => [a] -> [a]} which implements the
 
 \example{mergesort [4, 2, 7, 6, 2]}{[2, 2, 4, 6, 7]}
 \end{problem}
-
-TODO: more complex problems
 \section*{Tail-call recursion}
 Tail-call recursion is a special recursive pattern that deserves special attention, even though it's not discussed in \textit{Learn You a Haskell}. Tail-call recursive functions are a subset of recursive functions, with the property that for every recursive call, the result of that recursive call is returned directly rather than being modified before returned. For every recursive pattern, the function must be defined as a call to itself with different parameters. To make things clearer, here's a factorial function implemented in a non-tail-call recursive way.
 
@@ -84,13 +82,13 @@ fact2 n = fact2' n 1
 
 Notice how the recursive call to the inner helper function \texttt{fact2'} is returned directly by \texttt{fact2'} instead of being modified. Like in this example here, tail-call recursive functions often require an extra parameter to hold an accumulator value or the result of a partial computation while function is recursing. Since the value of a tail-call recursive function is returned directly without being modified first, the modification must be done to parameters which are passed back into the recursive function.
 
-Why do we care about tail-call recursion? When Haskell programs are compiled, tail-call recursive functions can be optimized so that instead of requiring the use of the call stack in assembly to handle each recursive call, the recursive computation can be modeled by a while loop and thus there is no risk of consuming too much memory! This very convienent process is known as tail-call optimization or tail-call elimination. The reason is that with tail-call recursive functions, the parameters of the function can become local variables that are continually modified with each recursive call; when the base case is reached, no other computation has to be done since the value of the function is returned unmodified all the way up the call stack. with non-tail-call recursive functions, the value returned from the function might be modified by the parameters in every stack frame, and there's no clever way to optimize that out without storing every stack frame in memory separately. 
+Why do we care about tail-call recursion? When Haskell programs are compiled, tail-call recursive functions can be optimized so that instead of requiring the use of the call stack in assembly to handle each recursive call, the recursive computation can be modeled by a while loop and thus there is no risk of consuming too much memory! This very convienent process is known as tail-call optimization or tail-call elimination. The reason is that with tail-call recursive functions, the parameters of the function can become local variables that are continually modified with each recursive call; when the base case is reached, no other computation has to be done since the value of the function is returned unmodified all the way up the call stack. With non-tail-call recursive functions, the value returned from the function might be modified by the parameters in every stack frame, and there's no clever way to optimize that out without storing every stack frame in memory separately. 
 
 If you have not taken CS107 yet, this may be confusing; don't worry, the internal representations of function calls and the stack is taught thoroughly in that class. The important thing to take away is that tail-call recursive functions are often faster and more efficient to calculate than other recursive functions in Haskell. Here are some problems to play with tail-call recursion.
 \begin{problem}{Implementing sum}
 Here is a version of the \texttt{sum} function that is not tail-call recursive. Reimplement it so that it uses tail-call recursion.
 \begin{verbatim}
-sum1 :: [Int] -> Int
+sum1 :: Num a => [a] -> a
 sum1 [] = 0
 sum1 (n:ns) = n + (sum1 ns)
 \end{verbatim}
@@ -130,9 +128,13 @@ In order to print a string in \texttt{ghci} to see if it's formatted correctly, 
     )
 )
 \end{verbatim}
-
 Remember that building up a list by appending things to its back is much slower than building up a list by cons-ing things to its front. 
 \end{problem}
+\section*{Challenge problems}
+This one shouldn't be too difficult if you've taken CS106B/X. No need to limit yourself to tail-call recursion here, though it might still be useful. Don't just brute-force, be smart about your implementation.
+\begin{problem}{Coprime permutations}
+Write a function \texttt{coprimePerm ::\ [Int] -> [Int]} that finds a permutation of the input list such that adjacent integers are coprime. If none exists, return \texttt{[-1]}. Recall that two integers are coprime iff they have no common factors greater than 1.
 
-TODO: more tail-call problems here
+\example{coprimePerm [5, 8, 9, 3, 10, 2, 12, 25, 4]}{[8, 5, 2, 9, 10, 3, 4, 25, 12]}
+\end{problem}
 \end{document}
