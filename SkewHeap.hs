@@ -73,8 +73,7 @@ toList (SkewNode x left right) = x : toList left ++ toList right
 -- | Converts a heap to an ascending list of elements.
 toAscList :: Ord a => SkewHeap a -> [a]
 toAscList sh =
-  let m = extractMin sh
-  in case m of
+  case extractMin sh of
     Just (e, sh') -> e : (toAscList sh')
     Nothing -> []
 
