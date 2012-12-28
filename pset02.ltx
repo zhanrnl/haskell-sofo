@@ -98,7 +98,7 @@ Here is a version of the \texttt{reverse} function that is not tail-call recursi
 \begin{verbatim}
 reverse1 :: [a] -> [a]
 reverse1 [] = []
-reverse1 (x:xs) = (reverse xs) ++ x
+reverse1 (x:xs) = (reverse xs) ++ [x]
 \end{verbatim}
 
 Actually, this implementation is very bad for other reasons as well. The operation \texttt{a ++ b} is $O(|\mathtt{a}|)$, while cons-ing elements to the front of a list is only $O(1)$. This is due to the way lists are represented internally in Haskell. More about this later!
