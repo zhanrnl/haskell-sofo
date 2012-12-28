@@ -47,12 +47,12 @@ mapWithIndex f = mapI 0
 -- choose a folding direction: we may choose foldl so that we can start
 -- indexing from the left (start) at zero, but then we build the list in
 -- the wrong order; we could use foldr, but then we need to know what index
--- to use as the start (or we just feed in reverse indices, as below). A
+-- to use as the start. I've just used the inefficient (++) operator. A
 -- more advanced technique is to use DiffLists, which would allow us to build
 -- the list with a foldl without the inefficiency of (++), but we're not
 -- there yet.
 mapWithIndex' :: (Int -> a -> b) -> [a] -> [b]
-mapWithIndex' f = fst . foldr (\x (acc, n) -> (f n x : acc, n+1)) ([], 0)
+mapWithIndex' f = fst . foldl (\(acc, n) x -> (acc ++ f n x, n+1)) ([], 0)
 
 -- All, using recursion. Note that we could also specify that the list must
 -- contain at least a single element, but this isn't what the builtin one
@@ -62,11 +62,11 @@ all' _ []                 = True
 all' f (x:xs) | f x       = all' f xs
               | otherwise = False
 
--- All, using a fold. I like foldr, so I'll use it, but you could use any fold.
+-- All, using a fold. I like foldl here, but you could use any fold.
 all'' :: (a -> Bool) -> [a] -> Bool
-all'' f = foldr (\x all -> if f x then all else False) True
+all'' f = foldl (\b x -> if b then f x else False) True
 
--- I'll get to these
+-- Using manual recursion.
 foldr1' :: (a -> a -> a) -> [a] -> a
 foldr1' _ []     = error "foldr1': list must not be empty"
 foldr1' _ [x]    = x
@@ -120,7 +120,7 @@ fcomp f g x = g (f x)
 -- fcomp = flip (.)
 
 -- Hmm...it looks like it wants us to give the first function a (b -> a)
--- function, but we only have an a. However, this also looks similar to
+-- function, but we only have an a. However, this issue looks similar to
 -- const2 above.
 appc :: ((b -> a) -> c) -> a -> c
 appc f x = f (const x)
@@ -138,12 +138,15 @@ fmapC :: (a -> b) -> ((a -> r) -> r) -> (b -> r) -> r
 fmapC f g h = g (h . f)
 
 -- It looks like it feeds the third function as the second argument to the
--- second function, then feeds that result to the first function.
+-- second function, then feeds that result to the first function. Note that
+-- we may consider the type of the flipped second function to be
+-- ((b -> r) -> (a -> r)) because (->) is right-associative (due to currying).
 bindC :: ((a -> r) -> r) -> (a -> (b -> r) -> r) -> (b -> r) -> r
 bindC f g h = f ((flip g) h)
 
 -- Fibonacci numbers! Yay! Let's do this multiple ways.
--- First, an efficient C solution translated to Haskell. Meh.
+-- First, an efficient C solution translated to Haskell. Efficient, but not
+-- very fancy.
 fib :: Integer -> Integer
 fib n = fibBase 0 1 n
     where fibBase a _ 0 = a
@@ -154,7 +157,7 @@ fib' :: Int -> Integer
 fib' n = fibs 0 1 !! n
     where fibs a b = a : fibs b (a + b)
 
--- But even cooler, an infinite list of fibonacci numbers.
+-- But even cooler, an infinite list of fibonacci numbers!
 fibs' :: [Integer]
 fibs' = 0 : 1 : zipWith (+) fibs' (tail fibs')
 fib'' :: Int -> Integer
