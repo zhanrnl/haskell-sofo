@@ -9,6 +9,64 @@
 
 \begin{document}
 \maketitle
+Read Chapter 7 and Chapter 8 of \textit{Learn You a Haskell}, but you can ignore the bits about typeclasses and functors. We'll discuss them in depth next week.
+\section*{Using Maps}
+Here are a couple problems to practice using the \texttt{Data.Map} type. It's a good idea to import the module qualified to avoid namespace collisions.
+\begin{problem}{Histograms}
+Write a function \texttt{makeHistogram ::\ [a] -> Map a Int} that takes a list of elements and creates a \texttt{Map} from the distinct elements of the list to the number of times each element appears in the list. (Hint: higher-order functions make things pretty!)
+
+\example{makeHistogram "hello"}{fromList [('e',1),('h',1),('l',2),('o',1)]}
+\end{problem}
+\begin{problem}{Changing passwords}
+In this problem we'll be dealing with the following types and type synonyms, that could be used in the backend of a web application with user logins.
+\begin{verbatim}
+type Username = String
+type Password = String
+type PassMap = Map Username Password
+type PassMapModifier = PassMap -> PassMap
+data PasswordChangeViewmodel = PCVM {
+  cpvUsername :: Username,
+  cpvOldPassword :: Password,
+  cpvNewPassword1 :: Password,
+  cpvNewPassword2 :: Password
+  } deriving (Show)
+\end{verbatim}
+Write a function \texttt{changePasswordModifier ::\ PasswordChangeViewmodel -> PassMapModifier}, that will give a \texttt{PassMapModifier} that will change a user's password, which is a function that can be applied to the actual \texttt{Map} being used by the application. For security, the password should only be changed if the old password matches the user's current password, and if the two new passwords match.
+
+In real-world Haskell programming, it's considered good practice to use type synonyms like this, even though \texttt{Username}s and \texttt{Password}s aren't represented by different types, since it makes it even clearer what a data structure like \texttt{Map Username Password} should represent.
+\end{problem}
+\section*{Practice with Maybe and Either}
+\texttt{Maybe} and \texttt{Either} are two very important types in Haskell that are seen almost everywhere elegant error handling is required. Here are a few easy problems to get a sense of how they behave.
+\begin{problem}{Bind}
+In this function we will continue to be coy about what monads actually are and continue to give vague hints. Here you will implement bind for the Maybe monad.
+
+Write a function \texttt{bindMaybe ::\ Maybe a -> (a -> Maybe b) -> Maybe b}. If the first parameter is \texttt{Nothing} then the function can't be applied and the result should be \texttt{Nothing} as well.
+
+\example{bindMaybe (Just "lennart") ($\lambda$ name -> Map.lookup name passwordMap)}{Just "mypassword"}
+
+\example{bindMaybe (Just "notauser") ($\lambda$ name -> Map.lookup name passwordMap)}{Nothing}
+\end{problem}
+\begin{problem}{Data.Maybe functions}
+The Data.Maybe module contains many useful functions for working with \texttt{Maybe}s. Here are two simple ones to practice implementing:
+\begin{enumerate}
+\item Write the function \texttt{catMaybes ::\ [Maybe a] -> [a]}, which takes a list of \texttt{Maybe}s and returns a list of only the \texttt{Just} values.
+
+\example{catMaybes [Just 1, Just 2, Nothing, Just 3]}{[1, 2, 3]}
+\item Write the function \texttt{mapMaybe ::\ (a -> Maybe b) -> [a] -> [b]}, which works the same as a standard \texttt{map}, but only keeps values in the return list if the function gives a \texttt{Just}, so when the function gives \texttt{Nothing} there is no corresponding value of type \texttt{b} in the return list.
+
+\example{mapMaybe ($\lambda$ n -> if (even n) then (Just (n + 1)) else Nothing) [1..4]}{[3, 5]}
+\end{enumerate}
+\end{problem}
+\begin{problem}{ArrowChoice}
+This function comes from the module Control.Arrow, which is a typeclass related to generalized abstractions of functions. We probably won't have a chance to discuss it this quarter, but arrows are pretty cool. 
+
+Write the function \texttt{(+++) ::\ (b -> c) -> (b' -> c') -> (Either b b' -> Either c c')}.
+\end{problem}
+\begin{problem}{Silliness}
+Write a function \texttt{silliness ::\ Either a (Either b c) -> Either (Either a b) c}. It's not really useful for anything...
+
+\example{silliness (Right 1)}{Right (Right 1)}
+\end{problem}
 \section*{Skew heaps}
 In the next few problems you will implement a skew heap data type, a simple, unstructured, breed of heaps well-adapted to Haskell that can be used to implement priority queues with every operation in at most $O(\log n)$ time. Cool!
 
@@ -18,7 +76,7 @@ First, let's get used to the data type.
 \begin{verbatim}
 data SkewHeap a = Empty | SkewNode a (SkewHeap a) (SkewHeap a)
 \end{verbatim}
-The way to parse this type: a \texttt{SkewHeap} that contains elements of type \texttt{a} is either \texttt{Empty}, or is a \texttt{SkewHeap} containing a thing of type \texttt{a} at the root, then a left subtree \texttt{SkewHeap a}, then a right subtree \texttt{SkewHeap a}. That's it!
+The way to parse this type: a \texttt{SkewHeap} that contains elements of type \texttt{a} is either \texttt{Empty}, or is a \texttt{SkewNode}, a node of a skew heap, that contains an element of \texttt{a} at the root, then a left subheap \texttt{SkewHeap a}, then a right subheap \texttt{SkewHeap a}. That's it! It's really identical in structure to the binary tree discussed in \textit{Learn You a Haskell} Chapter 8, but with different names.
 \begin{problem}{Simple things}
 Implement \texttt{empty ::\ SkewHeap a}. This should give a skew heap with no elements in it.
 
@@ -47,7 +105,7 @@ Implement \texttt{toAscList ::\ Ord a => SkewHeap a -> [a]}, which takes a skew 
 \pgroupspace
 Congratulations! You've implemented a new container type with a similar interface to \texttt{Data.Set} and \texttt{Data.Map}, and a not-too-shabby amount of code. Hopefully this gives you some idea about what goes on under the surface when you use container type modules: it's not mysterious stuff, just plain old Haskell you could understand or implement yourself. 
 
-As a reward...
+As a reward\ldots
 \begin{problem}{Heap sort}
 Use skew heaps to implement \texttt{heapsort ::\ Ord a => [a] -> [a]} :)
 \end{problem}
