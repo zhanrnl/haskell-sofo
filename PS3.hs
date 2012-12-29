@@ -62,9 +62,9 @@ all' _ []                 = True
 all' f (x:xs) | f x       = all' f xs
               | otherwise = False
 
--- All, using a fold. I like foldl here, but you could use any fold.
+-- All, using a fold. I like foldr here, but you could use any fold.
 all'' :: (a -> Bool) -> [a] -> Bool
-all'' f = foldl (\b x -> if b then f x else False) True
+all'' f = foldr (\x b -> if b then f x else False) True
 
 -- Using manual recursion.
 foldr1' :: (a -> a -> a) -> [a] -> a
@@ -185,3 +185,4 @@ fib''' n = fibs'' !! n
 foldlInR :: (a -> b -> a) -> a -> [b] -> a
 --foldlInR f k xs = foldr (\x g -> (\c -> g (f c x))) id xs k
 foldlInR f k xs = foldr (\x g c -> g (f c x)) id xs k
+
