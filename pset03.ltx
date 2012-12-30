@@ -31,6 +31,9 @@ func3 :: \answerline
 \item func4 f = foldr f 0 "Hello, world!"\\
 func4 :: \answerline
 \item zipWith (\$) :: \answerline
+
+\rm These last few are tricky, and therefore they are slightly more optional than the rest of the problems. \tt
+
 \item func5 xs = map ($\lambda$ p -> takeWhile p xs)\\
 func5 :: \answerline
 \item func6 = foldl ($\lambda$ a b -> show b :\ a)\\
@@ -59,7 +62,6 @@ Implement the following functions using \texttt{foldl} or \texttt{foldr}.
 \item \texttt{product ::\ Num a => [a] -> a}, which computes the product of a list of numbers.
 \item \texttt{maxLength ::\ [[a]] -> Int}, which computes the length of the longest list out of all the lists in the input list.
 \item \texttt{compose ::\ [(a -> a)] -> a -> a}, which composes together of the functions in the input list.
-\item \texttt{map ::\ (a -> b) -> [a] -> [b]}. Yes, this can actually be done with \texttt{foldr}, but it's a little tricky!
 \end{enumerate}
 \end{problem}
 \begin{problem}{Let's play a game!}
