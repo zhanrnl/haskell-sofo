@@ -57,11 +57,6 @@ Implement the following functions that are defined in Prelude. Since they're par
 
 This is a really great way to generate lots of exercises for yourself if you want more. You already know how to implement many functions in Prelude, and many in the module Data.List. Read the first bit of Chapter 7 of \textit{Learn You a Haskell} for more information on Data.List.
 \end{problem}
-\begin{problem}{Mergesort}
-Write a function \texttt{mergesort ::\ Ord a => [a] -> [a]} which implements the mergesort algorithm.
-
-\example{mergesort [4, 2, 7, 6, 2]}{[2, 2, 4, 6, 7]}
-\end{problem}
 \section*{Tail-call recursion}
 Tail-call recursion is a special recursive pattern that deserves special attention, even though it's not discussed in \textit{Learn You a Haskell}. Tail-call recursive functions are a subset of recursive functions, with the property that for every recursive call, the result of that recursive call is returned directly rather than being modified before returned. For every recursive pattern, the function must be defined as a call to itself with different parameters. To make things clearer, here's a factorial function implemented in a non-tail-call recursive way.
 
@@ -129,6 +124,11 @@ In order to print a string in \texttt{ghci} to see if it's formatted correctly, 
 )
 \end{verbatim}
 Remember that building up a list by appending things to its back is much slower than building up a list by cons-ing things to its front. 
+\end{problem}
+\begin{problem}{Mergesort}
+Write a function \texttt{mergesort ::\ Ord a => [a] -> [a]} which implements the mergesort algorithm.
+
+\example{mergesort [4, 2, 7, 6, 2]}{[2, 2, 4, 6, 7]}
 \end{problem}
 \section*{Challenge problems}
 This one shouldn't be too difficult if you've taken CS106B/X. No need to limit yourself to tail-call recursion here, though it might still be useful. Don't just brute-force, be smart about your implementation.
