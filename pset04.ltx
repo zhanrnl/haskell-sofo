@@ -62,10 +62,8 @@ This function comes from the module Control.Arrow, which is a typeclass related 
 
 Write the function \texttt{(+++) ::\ (b -> c) -> (b' -> c') -> (Either b b' -> Either c c')}.
 \end{problem}
-\begin{problem}{Silliness}
-Write a function \texttt{silliness ::\ Either a (Either b c) -> Either (Either a b) c}. It's not really useful for anything\ldots
-
-\example{silliness (Left 1)}{Left (Left 1)}
+\begin{problem}{More bind}
+Write a function \texttt{bindEither ::\ Either a b -> (b -> Either a c) -> Either a c}. Hm, that type signature looks slightly similar to the \texttt{Maybe} version. Probably the implementation should be similar as well! But what in the world is this good for\ldots
 \end{problem}
 \section*{Skew heaps}
 In the next few problems you will implement a skew heap data type, a simple, unstructured, breed of heaps well-adapted to Haskell that can be used to implement priority queues with every operation in at most $O(\log n)$ time. Cool!
