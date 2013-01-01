@@ -2,6 +2,7 @@
 
 -- For the strict foldl.
 import Data.Foldable(foldl')
+import Data.List(mapAccumL)
 
 -- Types.
 type1 = (+3) :: (Integral a) => a -> a
@@ -53,6 +54,16 @@ mapWithIndex f = mapI 0
 -- there yet.
 mapWithIndex' :: (Int -> a -> b) -> [a] -> [b]
 mapWithIndex' f = fst . foldl (\(acc, n) x -> (acc ++ f n x, n+1)) ([], 0)
+
+
+-- Of course, the simplest definitions are the ones that rely the most on Haskell's
+-- standard libraries:
+
+mapWithIndex''' :: (Int -> a -> b) -> [a] -> [b]
+mapWithIndex''' f = snd . mapAccumL (\n x -> (n+1, f n x)) 0
+
+mapWithIndex'''' :: (Int -> a -> b) -> [a] -> [b]
+mapWithIndex'''' = flip zipWith [0..]
 
 -- All, using recursion. Note that we could also specify that the list must
 -- contain at least a single element, but this isn't what the builtin one
