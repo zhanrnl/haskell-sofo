@@ -36,23 +36,19 @@ type13 = (.).(.) :: (c -> d) -> (a -> b -> c) -> a -> b -> d
 -- in the list to f, then composes g with each resulting function.
 type14 = (\f g -> map (. g) . map ($ f)) :: a -> (d -> b) -> [a -> b -> c] -> [d -> c]
 
--- Let's do it with raw recursion in the helper function. We could probably
--- do it with a fold or something as well, but this is easier to write.
+-- Let's do it with raw recursion in the helper function.
+
 mapWithIndex :: (Int -> a -> b) -> [a] -> [b]
 mapWithIndex f = mapI 0
     where mapI _ []     = []
           mapI n (x:xs) = f n x : mapI (n+1) xs
 
--- It's actually a bit harder to do with a fold because it's difficult to
--- choose a folding direction: we may choose foldl so that we can start
--- indexing from the left (start) at zero, but then we build the list in
--- the wrong order; we could use foldr, but then we need to know what index
--- to use as the start. I've just used the inefficient (++) operator. A
--- more advanced technique is to use DiffLists, which would allow us to build
--- the list with a foldl without the inefficiency of (++), but we're not
--- there yet.
+-- Of course, the simplest definitions are the ones that rely the most on Haskell's
+-- standard libraries:
+
 mapWithIndex' :: (Int -> a -> b) -> [a] -> [b]
-mapWithIndex' f = fst . foldl (\(acc, n) x -> (acc ++ f n x, n+1)) ([], 0)
+mapWithIndex' = flip zipWith [0..]
+
 
 -- All, using recursion. Note that we could also specify that the list must
 -- contain at least a single element, but this isn't what the builtin one
@@ -108,7 +104,7 @@ map' :: (a -> b) -> [a] -> [b]
 --map f = foldr (\x list -> (:) (f x) list) []
 map' f = foldr ((:) . f) []
 
--- Hmm...it seems to jsut ignore its second parameter.
+-- Hmm...it seems to just ignore its second parameter.
 const2 :: a -> b -> a
 const2 x _ = x
 --const2 x = (\_ -> x)
