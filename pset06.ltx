@@ -1,0 +1,112 @@
+\documentclass[11pt]{amsart}
+\usepackage[margin=1.0in]{geometry}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{enumerate}
+\input{macros.ltx}
+\title{Haskell Programming Problem Set 6}
+\author{Lennart Jansson and Brandon Azad}
+
+\begin{document}
+\maketitle
+
+This week's subject is applicative functors, a typeclass more powerful than plain functors that requires the same sort of conceptual abstract thinking you'll need to tackle monads. Though monads have a much wider range of uses, applicative functors express a few ideas really really elegantly. 
+
+\textit{LYAH} does discuss applicative functors briefly at the end of Chapter 11, but this is not a very solid coverage, so in addition to reading that, please read section 4 of Typeclassopedia by Brent Yorgey (http://www.haskell.org/haskellwiki/Typeclassopedia\#Applicative), which gives additional information about applicatives from a slightly more mathematical standpoint. If you are interested, explore the additional links he provides, and if you have spare time or need practice, do the exercises in that section, including implementing the applicative instance for Maybe.
+
+This problem set is two large problems. This first is a module for dealing with encryption and decryption using the de Vigen\`ere cipher, which will use the Applicative instance of Maybe to deal with error conditions in an elegant way. The second is a parser module that you can use to parse strings into abstract data types for easier manipulation. Parsers were some of the original motivation for the applicative typeclass, and we'll see how the applicative framework allows us to build larger parsers by combining smaller parsers in a beautiful way. We will also meet the Alternative typeclass, which is for applicative functors that are also monoids.
+\section*{de Vigen\`ere Cipher}
+TODO
+\section*{MiniParser}
+In this large problem, we will build an applicative parser from scratch, then use it to parse a context-free grammar. This is really really cool, please don't skip this problem because it is well worth your time.
+
+The motivation behind applicative parsers is that the way parsers can be combined corresponds to the \texttt{<*>} operation of applicative functors. This means smaller parsers can be combined together to make larger parsers that can parse more and more complex grammars.
+
+Let's get started! Open a new file and \texttt{import Control.Applicative}. Let's familiarize ourselves with the type we will use:
+\begin{verbatim}
+newtype MiniParser a = MiniParser {
+  unMP :: String -> Maybe (String, a)
+  }
+\end{verbatim}
+It's given as a newtype wrapper, which makes the code a little bit messier, but means the functor and applicative instances we will define will be specific to our parser implementation; this is considered good practice. We're using record syntax, so we can use \texttt{MiniParser} to wrap a function as a parser, and \texttt{unMP} to retrieve the function from inside the newtype wrapper.
+
+Now the type. The parser is a function that takes a string; that should be intuitive, since we will want our parser to operate on a single input, the string it should be parsing. The return type is \texttt{Maybe (String, a)}: we have a \texttt{Maybe} since the parsing might fail, in which case the parser would return \texttt{Nothing}. If it succeeds, it will return \texttt{Just (String, a}), where the string is the remainder of the string that wasn't consumed by that parsing pass, and we have a value of type \texttt{a} as a result. We obviously want our parser to be able to produce some result in a type that we want, after consuming a string. That's what the type \texttt{a} is.
+
+\begin{problem}{runParser}
+Write a function \texttt{runParser ::\ MiniParser a -> String -> Maybe a}. This is how we'll run parsers we create on a given input. This should be simple, all this function needs to do is unwrap the parser, apply the input string to the parser, and then collect the result.
+\end{problem}
+\begin{problem}{runParserComplete}
+Write a function \texttt{runParserComplete ::\ MiniParser a -> String -> Maybe a}, that is a variation on \texttt{runParser} that will run the parser in the same way, but fail (return \texttt{Nothing}) if not all of the input is consumed during the parsing.
+
+This behavior is often more useful, since you can test if the whole input string follows a certain grammar instead of just a prefix of the string.
+\end{problem}
+\begin{problem}{Your first parser}
+Write a function \texttt{charP ::\ Char -> MiniParser Char} that parses a single given character, and only that character, returing the parsed character as a result.
+\end{problem}
+
+If this was all a bit confusing, here are some examples of how these functions can be used. When your program can do all this you're ready to move on.
+
+\example{runParser (charP 'a') "a"}{Just 'a'}
+
+\example{runParser (charP 'a') "b"}{Nothing}
+
+\example{runParser (charP 'a') "alloy"}{Just 'a'}
+
+\example{runParser (charP 'a') "barnacle"}{Nothing}
+
+\example{runParserComplete (charP 'a') "a"}{Just 'a'}
+
+\example{runParserComplete (charP 'a') "alloy"}{Nothing}
+
+That last example fails because not all of the input string ``alloy'' is consumed by the parser that only parses the single character `a', since after the parser has done its work, there should still be the string ``lloy'' remaining.
+\begin{problem}{Parsing words}
+Use the \texttt{sequenceA} function you used in the Vigen\`ere cipher module to turn a parser for a given character into a parser for a given word. Write the function \texttt{wordP ::\ String -> MiniParser String}.
+
+\example{runParserComplete (wordP "hello") "hello"}{Just "hello"}
+
+\example{runParserComplete (wordP "hello") "ohnoes"}{Nothing}
+\end{problem}
+
+Alright. Now the crazy typeclass fun begins!
+\begin{problem}{Functor}
+Make your parser a functor:
+\begin{verbatim}
+instance Functor MiniParser where
+  fmap <your implementation here>
+\end{verbatim}
+Let's think about what \texttt{fmap} should do. It's useful to think of this functor instance as similar to the functor instance for \texttt{((->) r)}, namely, \texttt{fmap} as function composition. Since the parser is a function, what \texttt{fmap} needs to do is compose a new function around the existing parsing function. 
+
+Of course, there's a little trickery that needs to happen since the return value of the parser is not a pure value that is ready for applying to a new function, but rather a \texttt{Maybe} around a tuple. Obviously, the new function should not be applied if the parser fails, and should not affect the remainder of the string to be parsed, if any.
+
+Make sure your functor instance abides by the functor laws!
+
+\example{runParserComplete (fmap reverse \$ wordP "hello") "hello"}{Just "olleh"}
+
+\example{runParserComplete (fmap reverse \$ wordP "hello") "ohnoes"}{Nothing}
+\end{problem}
+\begin{problem}{Applicative}
+Make your parser an applicative functor:
+\begin{verbatim}
+instance Applicative MiniParser where
+  pure <your implementation here>
+  (<*>) <your implementation here>
+\end{verbatim}
+This is the hardest part of the whole assignment. Good luck!
+
+\texttt{pure} needs to produce a parser that will always succeed and return a certain value without actually consuming any input.
+
+\texttt{(<*>)} needs to run the first parser on the input, which should give a partially consumed string and the result, which is a function. Then, the next parser should be run on the remainder of the string input, which should produce a value to feed to the function obtained from the first parser. Of course, if one of the parsers fail, then the whole computation should fail.
+
+Why do we need to thread a partially consumed string from the parser in the first argument to the parser in the second argument? This is actually the key to the whole applicative parsing business in the first place! Using \texttt{(<*>)}, we can combine two parsers to create a new one that will run those two parsers one after the other. Not only that, but since the first parser can yield a function as a result, we can save the results from both parsers and combine the results however we please.
+
+Once we have defined \texttt{pure} and \texttt{(<*>)}, we get a bunch of utility functions for free. Very useful are \texttt{(*>) ::\ (Applicative f) => f a -> f b -> f b} and \texttt{(<*) ::\ (Applicative f) => f a -> f b -> f a}, which can be used to sequence parsers along with consuming input and failing on wrong inputs, but without actually saving the result from one of the parsers. A mnemonic for keeping \texttt{(<*>)}, \texttt{(*>)}, and \texttt{(<*)} straight: an arrow points to whichever parser we want to save information from.
+
+\example{runParserComplete ((++) <\$> (wordP "hello ") <*> (wordP "world")) "hello world"}{Just "hello world"}
+
+\example{runParserComplete ((,) <\$> (wordP "hello ") <*> (wordP "world")) "hello world"}{("hello ","world")}
+
+\example{runParserComplete ((charP 'a') *> (charP 'b')) "ab"}{Just 'b'}
+
+\example{runParserComplete ((charP 'a') *> (charP 'b')) "b"}{Nothing}
+\end{problem}
+\end{document}
