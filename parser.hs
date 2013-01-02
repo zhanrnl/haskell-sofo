@@ -28,6 +28,9 @@ instance Alternative MiniParser where
                   g s = maybe (upb s) Just (upa s)
               in MiniParser g
 
+sequenceA :: Applicative f => [f a] -> f [a]
+sequenceA fs = foldr (\x ys -> (:) <$> x <*> ys) (pure []) fs
+
 runParser :: MiniParser a -> String -> Maybe a
 runParser p s = snd <$> (unMP p s)
 
@@ -36,12 +39,15 @@ runParserComplete p s = f $ unMP p s
   where f (Just ("", a)) = Just a
         f _ = Nothing
 
-charP :: Char -> MiniParser ()
+charP :: Char -> MiniParser Char
 charP c = MiniParser f
   where f "" = Nothing
         f (x:xs)
-          | x == c = Just (xs, ())
+          | x == c = Just (xs, c)
           | otherwise = Nothing
+
+wordP :: String -> MiniParser String
+wordP = sequenceA . map charP
 
 -- SAMPLE USAGE
 
@@ -82,3 +88,6 @@ nAsNBsP :: MiniParser Int
 nAsNBsP = aSomethingB <|> middle
   where aSomethingB = (+ 1) <$> (aP *> nAsNBsP <* bP)
         middle = pure 0
+
+abbaP :: MiniParser [AB]
+abbaP = const [A, B, B, A] <$> wordP "abba"
