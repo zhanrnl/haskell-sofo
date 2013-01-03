@@ -6,18 +6,14 @@ newtype MiniParser a = MiniParser {
 
 instance Functor MiniParser where
     fmap f = MiniParser . (fmap $ fmap $ fmap f) . unMP
-        
+
 instance Applicative MiniParser where
     pure a = MiniParser $ \s -> pure (s, a)
-    pf <*> pa = let upf = unMP pf
-                    upa = unMP pa
-                    g s = h <$> upf s
-                    h (s, f) = i f <$> upa s
-                    i f (s, a) = (s, f a)
-                in MiniParser $ join . g
-        where join (Just (Just a)) = Just a
-              join _ = Nothing
-                    
+    pf <*> pa = MiniParser $ \s -> unMP pf s `bind` runSecond
+        where bind Nothing  f = Nothing
+              bind (Just x) f = f x
+              runSecond (s,f) = fmap f <$> unMP pa s
+      
 instance Alternative MiniParser where
     empty = MiniParser $ pure empty
     pa <|> pb = MiniParser $ \s-> unMP pa s <|> unMP pb s
