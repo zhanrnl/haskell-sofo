@@ -5,7 +5,7 @@ import qualified Data.Map as M
 import Data.Monoid
 import qualified Data.Foldable as F
 
--- Problem 1: Although Either is usually used in Haskell to represent the
+-- Problem 1a: Although Either is usually used in Haskell to represent the
 -- result of a computation that might fail, with the successful result
 -- stored in Right and some sort of error state or message stored in Left,
 -- it might in some circumstances be useful to have an instance of fmap that
@@ -27,6 +27,7 @@ instance Functor (FlipEither a) where
 -- Also, a helper function.
 mapLeft :: (a -> b) -> Either a c -> Either b c
 mapLeft f = getEither . fmap f . FlipEither
+
 
 -- Problem 2a: You should already be familiar with Maps from Data.Map. We don't
 -- have access to the internals of Data.Map so as to implement fmap
@@ -172,18 +173,23 @@ instance (Bounded a, Ord a) => Monoid (Minimum a) where
 
 newtype MMinimum a = MMinimum { getMMinimum :: Maybe a } deriving (Show)
 
+-- Let's also make a smart constructor:
+mMinimum :: a -> MMinimum a
+mMinimum = MMinimum . Just
+
 instance (Ord a) => Monoid (MMinimum a) where
     mempty = MMinimum Nothing
     MMinimum Nothing `mappend` m = m
     m `mappend` MMinimum Nothing = m
-    MMinimum (Just x) `mappend` MMinimum (Just y) = MMinimum . Just $ min x y
+    MMinimum (Just x) `mappend` MMinimum (Just y) = mMinimum (min x y)
 
 -- Note that you will be able to rewrite the last mappend method above to be
 -- more concise and expressive later, once we've done applicative functors.
 --MMinimum x `mappend` MMinimum y = MMinimum (min <$> x <*> y)
 
--- Problem 4c: Are functions monoids? Create a sample function monoid instance
--- and see if it has the properties of a monoid.
+-- Problem 4c: Are any types of functions monoids? Considering only functions
+-- with no type constraints on the parameters or results, create a Monoid
+-- instance for some type of function and show that it obeys the monoid laws.
 
 -- First, it would be impossible to combine functions with different input
 -- and output types generically: how to I do (a -> b) `mappend` (a -> b)?
@@ -222,12 +228,26 @@ instance Monoid (MFunction a) where
 --     = MFunction (f . g . h)
 --     -> MFunction (f . g . h) = MFunction (f . g . h)
 --
--- So it indeed does appear that functions can be Monoids. In fact, the id
--- function seems almost expressly designed to be the monoidal identity, and
--- function composition seems almost expressly designed to be the monoidal
--- addition operation. This makes sense intuitively, since we want functions
--- to share various properties with other abstract frameworks such as numbers.
+-- Thus, functions of type (a -> a) are Monoids. The standard library
+-- has the Endo type (standing for endomorphism) to represent this.
 --
+-- Problem 4d: If we allow ourselves to put a type constraints on the
+-- functions, we can make functions Monoids in another way as well.
+-- Implement another instance of Monoid for functions.
+-- (Hint: What if some type in the function, parameter or result, were
+-- a monoid?)
+
+-- Another way to combine functions is to combine just the results from
+-- the functions. That is, if we have two functions (a -> m) where m is
+-- a monoid then we can create a new function of type (a -> m) that
+-- passes its parameter to both and then combines the results.
+
+newtype MCombineFunction a m = MCFunction { getCFunction :: (a -> m) }
+
+instance (Monoid m) => Monoid (MCombineFunction a m) where
+    mempty = const mempty
+    MCFunction f `mappend` MCFunction g = \x -> f x `mappend` g x
+
 
 -- Problem 5a: Give the types of the following expressions:
 -- 1. fmap (+3)
@@ -272,6 +292,9 @@ instance Monoid (MFunction a) where
 -- fmap fmap fmap :: (Functor f, Functor f1) =>
 --                   (a -> b) -> f (f1 a) -> f (f1 b)
 --
+-- Another way of doing the same thing is: fmap . fmap. This is more
+-- concise and should usually be preferred in practice.
+--
 
 -- Problem 5c: Using the results from the previous part, find a combination
 -- of fmaps that yields a function with type:
@@ -297,6 +320,9 @@ instance Monoid (MFunction a) where
 --
 -- fmap fmap (fmap fmap fmap) :: (Functor f, Functor f1, Functor f2) =>
 --                               (a -> b) -> f (f1 (f2 a)) -> f (f1 (f2 b))
+--
+-- Note that the expression fmap . fmap . fmap does the same thing as the
+-- above.
 --
 
 -- Problem 6: Implement F.foldr in terms of F.foldMap.
