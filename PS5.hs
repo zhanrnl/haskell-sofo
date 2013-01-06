@@ -274,7 +274,7 @@ instance Monoid (MFunction a) where
 --
 
 -- Problem 5c: Using the results from the previous part, find a combination
--- of fmaps that yield a function with type:
+-- of fmaps that yields a function with type:
 -- (Functor f, Functor f1, Functor f2) =>
 --   (a -> b) -> f (f1 (f2 a)) -> f (f1 (f2 b))
 
@@ -304,7 +304,11 @@ instance Monoid (MFunction a) where
 -- foldMap has the type:
 -- (Foldable t, Monoid m) => (a -> m) -> t a -> m
 -- We're going to have to use some sort of monoid to accomplish the fold, so
--- what do we use? 
+-- what do we use? We could reduce the structure down to a list and then
+-- fold over that:
 foldrF :: (F.Foldable t) => (a -> b -> b) -> b -> t a -> b
-foldrF f k t = 
+foldrF f k = foldr f k . F.foldMap (:[])
+
+-- Is there a better way? Probably so, but I can't think of it offhand.
+-- This is certainly conceptually simple.
 
