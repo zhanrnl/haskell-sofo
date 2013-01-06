@@ -16,7 +16,53 @@ This week's subject is applicative functors, a typeclass more powerful than plai
 
 This problem set is two large problems. This first is a module for dealing with encryption and decryption using the de Vigen\`ere cipher, which will use the Applicative instance of Maybe to deal with error conditions in an elegant way. The second is a parser module that you can use to parse strings into abstract data types for easier manipulation. Parsers were some of the original motivation for the applicative typeclass, and we'll see how the applicative framework allows us to build larger parsers by combining smaller parsers in a beautiful way. We will also meet the Alternative typeclass, which is for applicative functors that are also monoids.
 \section*{de Vigen\`ere Cipher}
-TODO
+In this problem, we'll create a simple module to do encryption and decryption using the de Vigen\`ere cipher.
+
+The De Vigenere cipher is a simple encryption scheme based on the idea of shifting letters in the plaintext to produce the ciphertext. The process is relatively straightforward: The key (some combination of letters, frequently a word) is first translated into a list of numbers that represent shifts. Then, this list is superimposed above the plaintext, so that each letter is given a shift value (if there are fewer letters in the key than in the plaintext, the list of shifts is repeated). Each letter in the plaintext is then shifted forward in the alphabet by the corresponding number of places (wrapping around, so that shifting one past `z' yields `a'). The result is the ciphertext. 
+
+See Wikipedia for a full description and examples. Most online descriptions are tailored to a graphical presentation of the cipher, so the description, while functionally equivalent, may appear to be different.
+
+You will make a module called \texttt{DeVigenere} that exports four functions:
+\begin{verbatim}
+plainToKey :: String -> Maybe [Int]
+deVigenere :: [Int] -> String -> String
+deVigenereEncrypt :: String -> String -> Maybe String
+deVigenereDecrypt :: String -> String -> Maybe String
+\end{verbatim}
+
+\begin{problem}{Key creation}
+\begin{verbatim}
+plainToKey :: String -> Maybe [Int]
+\end{verbatim}
+
+\texttt{plainToKey} should take a key in plaintext and convert it to a list of offsets. If any character in the key is not a letter, the function should fail by returning \texttt{Nothing}. 
+\end{problem}
+
+\begin{problem}{The algorithm}
+\begin{verbatim}
+deVigenere :: [Int] -> String -> String
+\end{verbatim}
+\texttt{deVigenere} should take a list of offsets and use it to encrypt a plaintext string. Any non-alphabetic character in the plaintext should be self-enciphered and should not cause the function to fail by returning \texttt{Nothing}. 
+\end{problem}
+
+\begin{problem}{Encryption}
+\begin{verbatim}
+deVigenereEncrypt :: String -> String -> Maybe String
+\end{verbatim}
+\texttt{deVigenereEncrypt} is a helper function that takes a key and the plaintext and enciphers the plaintext with the key. If the key is invalid, the function should fail by returning \texttt{Nothing}.
+\end{problem}
+
+\begin{problem}{Decryption}
+\begin{verbatim}
+deVigenereDecrypt :: String -> String -> Maybe String
+\end{verbatim}
+\texttt{deVigenereDecrypt} is just like \texttt{deVigenereEncrypt}, only it performs decryption instead of encryption. 
+\end{problem}
+
+\pgroupspace
+All four functions should accept both upper and lower case letters as valid. You should manage failure conditions by using Applicative rather than by conditional execution using pattern matching. Applicative is there to help abstract away the details; pattern matching puts the details right in your face for you to manage.
+
+Hints and Suggestions: Good decomposition is critical to be able to express the ideas neatly and succinctly. You might find it helpful to borrow the function sequenceA from Learn You a Haskell. My entire solution is about sixty lines, and uses \texttt{Just} and \texttt{Nothing} exactly once each (in part thanks to the \texttt{maybe} function).
 \section*{MiniParser}
 In this large problem, we will build an applicative parser from scratch, then use it to parse a context-free grammar. This is really really cool, please don't skip this problem because it is well worth your time.
 
@@ -201,13 +247,17 @@ So the following are valid: \texttt{1}, \texttt{(1+2)}, \texttt{(6*9)}, \texttt{
 
 We want to parse strings to the following binary tree-like type:
 \begin{verbatim}
-data Expr = Integer | AddExpr Expr Expr | MultExpr Expr Expr 
+data Expr = NumExpr Integer | AddExpr Expr Expr | MultExpr Expr Expr 
   deriving (Show)
 \end{verbatim}
 
 Write a parser \texttt{arithmeticParser ::\ MiniParser Expr} that successfully parses arithmetic expressions.
+
+\example{runParserComplete arithmeticParser "((1+2)*3)"}{Just (MultExpr (AddExpr (NumExpr 1) (NumExpr 2)) (NumExpr 3))}
+
+\example{runParserComplete arithmeticParser "(1+2*3)"}{Nothing}
 \end{problem}
 
 \pgroupspace
-Alternatively, you can choose to write a parser for a different language. If you are interested, the languages \texttt{MiniParser} can handle are a subset of the context-free languages called the LL(1) languages. Parsing these languages does not require a lookahead of more than 1 character reading from the left, which is the way the \texttt{MiniParser} works. Other parsing libraries for Haskell are more powerful and can handle a much wider variety of languages.
+Alternatively, you can choose to write a parser for a different language. If you are interested, the languages \texttt{MiniParser} can handle are a subset of the context-free languages called the LL(1) languages. Parsing these languages does not require a lookahead of more than 1 character reading from the left, which is the way the \texttt{MiniParser} works. Other parsing libraries for Haskell, notably \texttt{Parsec} and \texttt{Attoparsec}, are more powerful and can handle a much wider variety of languages.
 \end{document}
