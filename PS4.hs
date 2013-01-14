@@ -9,6 +9,11 @@ makeHistogram = foldr countElement M.empty
     where countElement elt map = M.insert elt (count elt map + 1) map
           count = M.findWithDefault 0
 
+-- Even better:
+makeHistogram' :: (Ord a) => [a] -> M.Map a Int
+makeHistogram' = foldr incCount M.empty
+    where incCount x = M.insertWith (+) x 1
+
 -- See Passwords.hs for the solution to Problem 2.
 
 -- bindMaybe is pretty self-explanatory.
