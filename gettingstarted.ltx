@@ -1,0 +1,55 @@
+\documentclass[11pt]{amsart}
+\usepackage[margin=1.0in]{geometry}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{enumerate}
+\input{macros.ltx}
+\title{Haskell Programming: Getting Started}
+\author{Lennart Jansson and Brandon Azad}
+
+\begin{document}
+\maketitle
+\section{Installing Haskell}
+Before you start coding in Haskell, you need to be able to compile and run code on your own computer, or this class will not be very interesting :)
+
+The recommended course of action for getting Haskell up and running on your computer is to install the Haskell Platform (\texttt{http://www.haskell.org/platform/}), which includes:
+\begin{enumerate}
+\item GHC, the most popular and powerful compiler for Haskell
+\item GHCi, an interactive shell (REPL) to test code easily using GHC
+\item Cabal, a package manager for Haskell libraries
+\end{enumerate}
+and many other more advanced things that we will probably not touch. It's very easy to install on Windows and Mac OSX with OS-specific installers, and all popular Linux distros have some form of the Haskell Platform in their package managers. If you are having trouble, we can help you get things running, this is the plan at our first meeting.
+\section{Running Haskell code}
+The way we will be running Haskell code, at least at the beginning of the SoFo, is to write the code in a file, save it with a \texttt{.hs} extension, then load it up in GHCi. To start GHCi, one simply types \texttt{ghci} into a terminal, and this will start the GHCi REPL shell. Then, enter \texttt{:l <name of file>} into GHCi. 
+
+For instance, to load up the file \texttt{foo.hs} and run the function \texttt{hello} in that file, we enter \texttt{ghci} into terminal, followed by entering \texttt{:l foo.hs}, then \texttt{hello}, into GHCi, which will then print the result of running function \texttt{hello}.
+\section{Basic introduction to syntax}
+It's highly recommended to read Chapters 1 and 2 of \textit{Learn You a Haskell} to get a more complete picture of the basics. This is just intended as a quickstart guide for people who are very eager.
+
+Functions in Haskell are different than functions in other language because they are \textit{pure}. This means functions can't do anything that modifies the outside world, and really can only talk to the rest of the world through the value they return. This is called functional purity, and it ensures that if you call a function in Haskell several times with the same parameters, it will return the same thing every time.
+
+Of course, this is not strictly true since there has to be \textit{some} way to do IO. This is handled elegantly in Haskell using the mathematical abstraction of monads; we will not discuss this for several weeks.
+\subsection{Function call}
+To call functions, give the name of the function, followed by the parameters to give to the function, all separated by spaces (no commas or parentheses necessary). For instance, to call the function \texttt{pythag} with parameters \texttt{3} and \texttt{4}, we write:
+\begin{verbatim}
+pythag 3 4
+\end{verbatim}
+\subsection{Function definition}
+Function definition is prettier and contains less noise than function definition in most other languages. Here the definition of the function \texttt{pythag}:
+\begin{verbatim}
+pythag x y = sqrt (x^2 + y^2)
+\end{verbatim}
+That's all there is to it, for now. The name of the function, not preceded by any keywords, then followed by the names of all the parameters we want for the function separated by spaces. The definition is just a Haskell expression that uses the parameters. Here's a function that uses an \texttt{if} statement.
+\begin{verbatim}
+evenOrOdd n = if even n
+                then "even"
+                else "odd"
+\end{verbatim}
+There is some more advanced function syntax that we will encounter next week that make more complex functions easier to write. These include \texttt{let} bindings, \texttt{where} bindings, pattern matching, and guards.
+
+Make sure you understand that in Haskell the equals sign (\texttt{=}) is \textit{definition}, not \textit{assignment}. In Haskell we can't have variables that we can assign values to like in an imperative language. Once we've defined the function \texttt{pythag}, we can't redefine it later, and similarly, we can reference the function \texttt{pythag} above where it's actually defined in the file. Everything behaves just like the way we define things in mathematics.
+\section{Tips for the first Problem Set}
+On the first problem set you'll have a bunch of simple functions to implement, which you can then run by loading the file in GHCi. You won't need any advanced features of Haskell, and all the functions are simple to define in terms of built-in functions in Haskell, as a first exercise in thinking functionally. You should read Chapter 2 of \textit{Learn You a Haskell}, and using GHCi to play around, get a good feel for what all of the following functions do:
+
+Arithmetic functions (\texttt{+}, \texttt{-}, \texttt{*}, \texttt{/}, \texttt{div}, \texttt{mod}), boolean functions (\texttt{\&\&}, \texttt{||}), comparison functions (\texttt{==}, \texttt{/=}, \texttt{<}, \texttt{>}), \texttt{min}, \texttt{max}, \texttt{++}, \texttt{:}, \texttt{!!}, \texttt{head}, \texttt{tail}, \texttt{last}, \texttt{init}, \texttt{length}, \texttt{null}, \texttt{reverse}, \texttt{take}, \texttt{drop}, \texttt{sum}, \texttt{product}, \texttt{minimum}, \texttt{maximum}, \texttt{elem}, \texttt{cycle}, \texttt{repeat}, \texttt{replicate}, \texttt{fst}, \texttt{snd}, and \texttt{zip}. You will also need to get familiar with ranges and list comprehensions.
+\end{document}
