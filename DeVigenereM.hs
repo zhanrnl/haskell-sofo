@@ -1,4 +1,4 @@
--- DeVigenere.hs
+-- DeVigenereM.hs
 -- The DeVigenere problem using Monads.
 
 module DeVigenere
@@ -19,10 +19,11 @@ position c
 
 -- Letter rotation.
 rotateLetter :: Int -> Char -> Maybe Char
-rotateLetter s c =
-    let newPos = (\p -> ((p + s) `mod` 26) + 1) <$> position c
-        ordShift = ((C.ord c) `div` 0x20) * 0x20
-    in  (.) <$> pure C.chr <*> pure (ordShift+) <*> newPos
+rotateLetter s c = do
+    pos <- position c
+    let newPos = (pos + s) `mod` 26 + 1
+    let ordShift = ((C.ord c) `div` 0x20) * 0x20
+    return (C.chr $ ordShift + newPos)
 
 -- Sequence applicatives. Credit: Learn You a Haskell
 sequenceA :: (Applicative f) => [f a] -> f [a]
@@ -43,13 +44,13 @@ plainToKey = sequenceA . map position
 -- |Encrypts the given plaintext using the given plain key using the De
 -- Vigenere cipher.
 deVigenereEncrypt :: String -> String -> Maybe String
-deVigenereEncrypt key plaintext =
-    plainToKey key >>= (flip deVigenere) plaintext
+deVigenereEncrypt key plaintext = do
+    rawKey <- plainToKey key
+    deVigenere rawKey plaintext
 
 -- |Decrypts the given ciphertext using the given plain key using the De
 -- Vigenere cipher.
 deVigenereDecrypt :: String -> String -> Maybe String
-deVigenereDecrypt key ciphertext =
-    let decryptionKey = (map negate) <$> plainToKey key
-    in  decryptionKey >>= (flip deVigenere) ciphertext
-
+deVigenereDecrypt key ciphertext = do
+    decryptionKey <- (map negate) <$> plainToKey key
+    deVigenere decryptionKey ciphertext

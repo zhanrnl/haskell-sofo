@@ -11,29 +11,31 @@ module DeVigenere
 import qualified Data.Char as C
 import Control.Applicative
 
--- Letter position.
+-- Letter position. I want to grab both upper and lower case letters, so
+-- I'm looking at the position in the ASCII table rather than subtracting
+-- ord 'a'.
 position :: Char -> Maybe Int
 position c
     | C.isAlpha c = Just ((C.ord c `mod` 0x20) - 1)
     | otherwise   = Nothing
 
--- Letter rotation.
+-- Letter rotation. We can use maybe to supply a default value when the
+-- letter is not alphabetic. We're exploiting the ASCII table to be case
+-- retentive.
 rotateLetter :: Int -> Char -> Char
-rotateLetter s c
-    | (Just pos) <- position c =
-        let newPos = ((pos + s) `mod` 26) + 1
-            ordShift = ((C.ord c) `div` 0x20) * 0x20
-        in  C.chr $ newPos + ordShift
-    | otherwise = c
+rotateLetter s c = maybe c rotate (position c)
+    where rotate pos =
+            let newPos = ((pos + s) `mod` 26) + 1
+                ordShift = (C.ord c `div` 0x20) * 0x20
+            in  C.chr (newPos + ordShift)
 
 -- Sequence applicatives. Credit: Learn You a Haskell
 sequenceA :: (Applicative f) => [f a] -> f [a]
 sequenceA = foldr (liftA2 (:)) (pure [])
 
 -- |This function takes a key in the form of a list of offsets and performs
--- the corresponding de Vigenere rotations to the given string. It can be
--- used for encryption and decryption (decryption is just using the negative
--- key).
+-- the corresponding de Vigenere rotations to the given string. It can be used
+-- for encryption and decryption (decryption simply uses the negative key).
 deVigenere :: [Int] -> String -> String
 deVigenere = zipWith rotateLetter . cycle
 
@@ -54,4 +56,3 @@ deVigenereDecrypt :: String -> String -> Maybe String
 deVigenereDecrypt key ciphertext =
     let decryptionKey = (map negate) <$> plainToKey key
     in  deVigenere <$> decryptionKey <*> pure ciphertext
-
