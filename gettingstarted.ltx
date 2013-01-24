@@ -19,6 +19,8 @@ The recommended course of action for getting Haskell up and running on your comp
 \item Cabal, a package manager for Haskell libraries
 \end{enumerate}
 and many other more advanced things that we will probably not touch. It's very easy to install on Windows and Mac OSX with OS-specific installers, and all popular Linux distros have some form of the Haskell Platform in their package managers. If you are having trouble, we can help you get things running, this is the plan at our first meeting.
+\section{The Textbook}
+For this SoFo the only ``textbook'' we will be using is \textit{Learn You a Haskell For Great Good!} by Miran Lipovaca, which is freely available online at \texttt{http://learnyouahaskell.com/}, it's good stuff and great for beginners. We may occasionally also have recommended supplemental readings from other websites.
 \section{Running Haskell code}
 The way we will be running Haskell code, at least at the beginning of the SoFo, is to write the code in a file, save it with a \texttt{.hs} extension, then load it up in GHCi. To start GHCi, one simply types \texttt{ghci} into a terminal, and this will start the GHCi REPL shell. Then, enter \texttt{:l <name of file>} into GHCi. 
 
@@ -34,6 +36,12 @@ To call functions, give the name of the function, followed by the parameters to 
 \begin{verbatim}
 pythag 3 4
 \end{verbatim}
+\subsection{Operators}
+Operators in Haskell are actually treated and defined just like functions, the only difference being that they are most commonly called \textit{infix}, rather than prefix like most functions. That way, you can say \texttt{1 + 2} like in most languages, instead of \texttt{+ 1 2} like in Lisp dialects. (You would probably agree that \texttt{1 + 2} is easier to read!)
+
+However, any function and any operator can be moved either infix or prefix. If you put parentheses around an operator, it becomes a prefix function. So, you could say \texttt{(+) 1 2} if you really wanted to, though there's not much reason to do so now. Later we'll talk about higher-order function constructs, and to refer to operators as functions in themselves they will need to have the parentheses.
+
+Similarly, functions with alphabetic names are usually used prefix, but using backticks (\texttt{`}, the other character on the tilde \texttt{~} key) a function can be used infix. For example, we can say \texttt{mod 5 3} which gives the result \texttt{2}, but some people think it looks nicer to write it as \texttt{5 `mod` 2}.
 \subsection{Function definition}
 Function definition is prettier and contains less noise than function definition in most other languages. Here the definition of the function \texttt{pythag}:
 \begin{verbatim}
